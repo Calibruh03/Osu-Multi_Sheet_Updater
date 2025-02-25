@@ -12,6 +12,8 @@ A Python application to update Google Sheets with osu! match data.
 
 ### 1️⃣ **Prerequisites**
 - Python 3.x installed on your system.
+- Create the json file through the steps below
+  1.) 
 
 ### 2️⃣ **Google Sheets Setup**
 1. Share your Google Spreadsheet with the **osu-integration-sa@osu-sheet-automation.iam.gserviceaccount.com**.
