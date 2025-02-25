@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "osu-sheet-automation",
+  "private_key_id": "2668e137a90f8ee33a0e38baa9bc052f9e78f78c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDiGIGHyGmLEHp4\nvJLy4L2nGct562smNHfb9W15kFDAuFsOSxkScBbjdEGkR/Yu1eP4GQLX15NQZOEJ\ng9E2LHvwgngmaSG3iqJm41Yh8/CD/actfc86qHTYUlb1zrWXZT7ef3iVqFg4dB5J\n/gAnKJHP6rKoVjgygbMkl5P1RZAfGhJOPej/0gIzG8GMkwVdyptQNVhPPTjyvY7c\n6G8m0r4jnv7sbXZqMiSVTiQcgiV+uyGDbzfUJYD3XvN8hb/+nB31n/wqMOpAjgR5\nw7hJcgAJDgK/bUd4aHuLliOliggX0nKczI2F5m7AjmnbplwL2SFPZYc9SmaOJ/MA\nBqwILTpfAgMBAAECggEAZb6Ja8UwWbhMpNCXgFzKe8wL2Q2r5kFuPrmvTik3bcKI\nl2IMIlP2uNy0PW10x5bRQ/BdayxDysXazyFWoH5cN9s+nmppFeN5ObvMIvNXpM4c\n0UfwXYE5M6+6GluvNDYHmLDcXtym9qCqkLmQ8A49r8b6Ju7F01SyfSEJIDLxrEyC\npUUbC3t0EOEzDtz71WiuGXW1/nNGnG1+ujge7RDdWv0WvBu7RBPVKbo5DHmp/GHf\nHavkXAmMPwAQmG3Md0+PX2z4YOXYFunKS5LbEe1/r0U8dQlnQJZukg9idczOykzB\nar/GrehcXXNhODu66zgfZOObCzzK5Sa4tYxDGR7KgQKBgQD1coQ8XtVNQINDz4bk\noFC5QzJR0Z0JddNFQJ72Lhexh+6LQOhlUTDKeqUNSn+VgYJ0P79NIDp7ZBZ55uRz\n53IUV0p0jsgK3pypb9GvE6iNPKTohJghvdj20akJy1AWoKjnE/fixhCBAoYvu9tP\naB3SdfbOefA7ae3I/UHBno/2TwKBgQDr0P+ijfkQpMY4OdXVynUYgouE+px+7szR\nBqX1yMhKsOrfbzjky4Pkqcl1wndPCuce8iKwDyYmUA9cqEoR0Yw9o8hJBepOEUTZ\njSWtpK6Gg3QB3tb8L1BMXo65WgqutEaTEsSdBRQGe5zPmkgWi1S3+gJ+/zaPieCI\nRtllR3eG8QKBgQCKAIk5KFjlxpAHYHeHtFuuzolMV37kAst29I5r/B52QudshGIm\nFTBJqAuFHY3+kYK3ud/ljWlUV0IL6DYqtMb/iNTkFCOFeQS8f5J1zafHQYG2+lZP\nIl8K53cTeqzdDBfrVN7bMmG1J6Yq0ITOcMvTuV+7V/Qqc7SufTarlmt7IQKBgEPO\n9EMs6eqURv9R+iAguG0U1MOnQKrrRe/xJnW3h4iauN8I32ZC8ykkfW6kPaR38R+f\n5sOTh5fKu7AcIDhhdh8fYm9FCSvroU2hXa1BxoGdeRU0m8MmY8OiCQ5ZSusToZuW\n8Pxpwmle0CeOKJ568CB6/o7AGlNKBUuKe+a4lzExAoGBANXKyL/1iKlr972ajIGY\nVhgE1AWkGCyqILGQIGIrgLXxhm4+fZdkfq1+lo5BHeFUrD+IFRAhQhfdEqHbLDhb\nYQ134gTv2aNyZ3anipw+lbWXhCP+MUKtibeh49tf461rly8kn7S5Spdw6q8m7Pb+\nqVG49f9IaopPQCmvKsC3JBfc\n-----END PRIVATE KEY-----\n",
+  "client_email": "osu-integration-sa@osu-sheet-automation.iam.gserviceaccount.com",
+  "client_id": "104586889547109077030",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/osu-integration-sa%40osu-sheet-automation.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
