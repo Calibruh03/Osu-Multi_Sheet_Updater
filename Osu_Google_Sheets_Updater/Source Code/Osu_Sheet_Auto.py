@@ -69,6 +69,49 @@ def load_column_d_values(sheet):
                 col_d_values.add(val)
     return list(col_d_values)
 
+def update_google_sheet_with_match_data_gui(sheet, match_data, access_token, col_d_mapping):
+    """ Updates the Google Sheet with match data using the user's mapping preferences. """
+    data = sheet.get_all_values()
+
+    # Build player columns mapping (starting from column G, index 6)
+    player_columns = {str(data[3][i]).strip().lower(): i for i in range(6, len(data[3])) if str(data[3][i]).strip()}
+
+    print("👥 Player columns mapping:", player_columns)
+
+    events = match_data.get('events', [])
+    for event in events:
+        game = event.get('game', None)
+        if not game:
+            continue
+
+        beatmap_info = game.get('beatmap', {})
+        beatmap_name = extract_beatmap_title(beatmap_info)
+
+        print(f"🎯 Processing Beatmap: {beatmap_name}")
+
+        for score_entry in game.get('scores', []):
+            user_id = score_entry.get('user_id')
+            if not user_id:
+                continue
+
+            username = f"User_{user_id}"  # Replace with actual username fetch if necessary
+            if username.lower() not in player_columns:
+                continue  # Skip if player isn't found
+
+            column_d_value = str(data[3][3]).strip().lower()  # Fetch Column D value
+            method = col_d_mapping.get(column_d_value, "score")  # Default to "score"
+
+            if method == "accuracy":
+                score_value = format_accuracy(score_entry.get('accuracy', 0))
+            elif method == "combo":
+                score_value = score_entry.get('max_combo', 0)
+            else:
+                score_value = score_entry.get('score', 0)
+
+            col_index = player_columns[username.lower()]
+            sheet.update_cell(4, col_index + 1, score_value)  # Adjust row index accordingly
+            print(f"✅ Updated {username}'s {method} on '{beatmap_name}': {score_value}")
+
 # -------------------- GUI Application --------------------
 
 class OsuSheetGUI(tk.Tk):
@@ -76,13 +119,13 @@ class OsuSheetGUI(tk.Tk):
         super().__init__()
         self.title("Osu! Sheet Updater")
         self.geometry("600x700")
-        
+
         self.lobby_id_var = tk.StringVar()
         self.spreadsheet_url_var = tk.StringVar()
         self.sheet_selection_var = tk.StringVar(value=VALID_SHEETS[0])
         self.col_d_mapping = {}
         self.credentials_path = None  # Stores uploaded JSON credentials path
-        
+
         self.create_widgets()
 
     def create_widgets(self):
@@ -112,7 +155,7 @@ class OsuSheetGUI(tk.Tk):
         file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
         if file_path and os.path.isfile(file_path):
             self.credentials_path = file_path  # Store uploaded file path dynamically
-            print(f"✅ JSON File Uploaded: {self.credentials_path}")  # Debugging print
+            print(f"✅ DEBUG: JSON File Uploaded -> {self.credentials_path}")  # Debugging print
             messagebox.showinfo("Success", f"Google API Credentials uploaded: {os.path.basename(file_path)}")
         else:
             messagebox.showerror("Error", "Invalid file selected.")
@@ -123,13 +166,51 @@ class OsuSheetGUI(tk.Tk):
             messagebox.showerror("Error", "Please upload Google API credentials JSON first.")
             return None
         try:
-            print(f"🔍 Using JSON Path: {self.credentials_path}")  # Debugging print
+            print(f"🔍 DEBUG: Using JSON Path -> {self.credentials_path}")  # Debugging print
             creds = ServiceAccountCredentials.from_json_keyfile_name(self.credentials_path, SCOPE)
             client = gspread.authorize(creds)
             return client
         except Exception as e:
             messagebox.showerror("Error", f"Failed to authenticate: {e}")
             return None
+
+    def load_mappings(self):
+        """ Loads Column D values and creates dropdown mappings """
+        if not self.credentials_path:
+            messagebox.showerror("Error", "Please upload Google API credentials JSON first.")
+            return
+
+        client = self.authenticate_google_sheets()
+        if not client:
+            return
+
+        try:
+            sheet = client.open_by_url(self.spreadsheet_url_var.get().strip()).worksheet(self.sheet_selection_var.get())
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to open spreadsheet: {e}")
+            return
+
+        col_d_values = load_column_d_values(sheet)
+
+        # Clear previous mapping widgets
+        for widget in self.mapping_frame.winfo_children():
+            widget.destroy()
+
+        tk.Label(self.mapping_frame, text="Mapping for Column D values:").pack()
+
+        self.dropdown_vars = {}
+        options = ["score", "accuracy", "combo"]
+        for val in col_d_values:
+            frame = tk.Frame(self.mapping_frame)
+            frame.pack(pady=2, anchor="w")
+            tk.Label(frame, text=f"'{val}': ").pack(side="left")
+            var = tk.StringVar(value="score")
+            dropdown = ttk.Combobox(frame, textvariable=var, values=options, state="readonly", width=10)
+            dropdown.pack(side="left")
+            self.dropdown_vars[val] = var
+
+        messagebox.showinfo("Info", "Column D mappings loaded. Select your options for each value.")
+
 
     def run_update(self):
         lobby_id = self.lobby_id_var.get().strip()
@@ -139,7 +220,7 @@ class OsuSheetGUI(tk.Tk):
         if not self.credentials_path:
             messagebox.showerror("Error", "Please upload Google API credentials JSON first.")
             return
-        
+
         client = self.authenticate_google_sheets()
         if not client:
             return
