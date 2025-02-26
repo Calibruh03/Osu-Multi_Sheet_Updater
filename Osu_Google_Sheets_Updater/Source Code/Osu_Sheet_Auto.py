@@ -158,17 +158,19 @@ class OsuSheetGUI(tk.Tk):
         else:
             messagebox.showerror("Error", "Invalid file selected.")
 
-    def authenticate_google_sheets(self):
-        if not self.credentials_path:
-            messagebox.showerror("Error", "Please upload Google API credentials JSON first.")
-            return None
-        try:
-            creds = ServiceAccountCredentials.from_json_keyfile_name(self.credentials_path, SCOPE)
-            client = gspread.authorize(creds)
-            return client
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to authenticate: {e}")
-            return None
+def authenticate_google_sheets(self):
+    """ Authenticate Google Sheets API using the uploaded JSON file """
+    if not self.credentials_path:
+        messagebox.showerror("Error", "Please upload Google API credentials JSON first.")
+        return None
+    try:
+        creds = ServiceAccountCredentials.from_json_keyfile_name(self.credentials_path, SCOPE)
+        client = gspread.authorize(creds)
+        return client
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to authenticate: {e}")
+        return None
+
 
     def run_update(self):
         lobby_id = self.lobby_id_var.get().strip()
