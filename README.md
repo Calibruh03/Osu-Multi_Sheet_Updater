@@ -19,7 +19,7 @@ A Python application to update Google Sheets with osu! match data.
 
   3.) Go to APIs & Services in the menu on the left, search Google Sheets API, and enable it. Repeat for Google Drive API
 
-  4.) Go to APIs & Services, then credentials in that. Click "Create Credentials" and Service Account. Name this whatever you want, and fillin the rest (just hit continue)
+  4.) Go to APIs & Services, then credentials in that. Click "Create Credentials" and Service Account. Name this whatever you want, and fill in the rest (just hit continue)
 
   5.) Go to the service account you just created, then go to keys and create new key. Then download the JSON
 
