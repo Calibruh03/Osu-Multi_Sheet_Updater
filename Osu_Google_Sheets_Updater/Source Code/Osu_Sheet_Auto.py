@@ -17,7 +17,6 @@ SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
-CREDS_FILE = "D:\\Python Code\\Osu_Sheets\\osu-sheet-automation.json"
 
 # List of valid sheet names
 VALID_SHEETS = [
@@ -193,10 +192,19 @@ def update_google_sheet_with_match_data_gui(sheet, match_data, access_token, col
                     print(f"ℹ️ No update needed for {username} on '{beatmap_name}' (Value: {score_value})")
 
 # Utility to authenticate and get a Google Sheets client.
-def authenticate_google_sheets():
-    creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_FILE, SCOPE)
-    client = gspread.authorize(creds)
-    return client
+def authenticate_google_sheets(self):
+    """ Authenticate Google Sheets API using the uploaded JSON file """
+    if not self.credentials_path:
+        messagebox.showerror("Error", "Please upload Google API credentials JSON first.")
+        return None
+    try:
+        creds = ServiceAccountCredentials.from_json_keyfile_name(self.credentials_path, SCOPE)
+        client = gspread.authorize(creds)
+        return client
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to authenticate: {e}")
+        return None
+
 
 # Function to load unique values from column D of the sheet.
 def load_column_d_values(sheet):
