@@ -69,49 +69,6 @@ def load_column_d_values(sheet):
                 col_d_values.add(val)
     return list(col_d_values)
 
-def update_google_sheet_with_match_data_gui(sheet, match_data, access_token, col_d_mapping):
-    """ Updates the Google Sheet with match data using the user's mapping preferences. """
-    data = sheet.get_all_values()
-
-    # Build player columns mapping (starting from column G, index 6)
-    player_columns = {str(data[3][i]).strip().lower(): i for i in range(6, len(data[3])) if str(data[3][i]).strip()}
-
-    print("👥 Player columns mapping:", player_columns)
-
-    events = match_data.get('events', [])
-    for event in events:
-        game = event.get('game', None)
-        if not game:
-            continue
-
-        beatmap_info = game.get('beatmap', {})
-        beatmap_name = extract_beatmap_title(beatmap_info)
-
-        print(f"🎯 Processing Beatmap: {beatmap_name}")
-
-        for score_entry in game.get('scores', []):
-            user_id = score_entry.get('user_id')
-            if not user_id:
-                continue
-
-            username = f"User_{user_id}"  # Replace with actual username fetch if necessary
-            if username.lower() not in player_columns:
-                continue  # Skip if player isn't found
-
-            column_d_value = str(data[3][3]).strip().lower()  # Fetch Column D value
-            method = col_d_mapping.get(column_d_value, "score")  # Default to "score"
-
-            if method == "accuracy":
-                score_value = format_accuracy(score_entry.get('accuracy', 0))
-            elif method == "combo":
-                score_value = score_entry.get('max_combo', 0)
-            else:
-                score_value = score_entry.get('score', 0)
-
-            col_index = player_columns[username.lower()]
-            sheet.update_cell(4, col_index + 1, score_value)  # Adjust row index accordingly
-            print(f"✅ Updated {username}'s {method} on '{beatmap_name}': {score_value}")
-
 # -------------------- GUI Application --------------------
 
 class OsuSheetGUI(tk.Tk):
@@ -150,28 +107,29 @@ class OsuSheetGUI(tk.Tk):
 
         tk.Button(self, text="Run Update", command=self.run_update).pack(pady=20)
 
-def upload_credentials(self):
-    """ Allow user to upload Google API credentials JSON file """
-    file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
-    if file_path and os.path.isfile(file_path):
-        self.credentials_path = file_path  # Store uploaded file path dynamically
-        messagebox.showinfo("Success", f"Google API Credentials uploaded: {os.path.basename(file_path)}")
-    else:
-        messagebox.showerror("Error", "Invalid file selected.")
+    def upload_credentials(self):
+        """ Allow user to upload Google API credentials JSON file """
+        file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+        if file_path and os.path.isfile(file_path):
+            self.credentials_path = file_path  # Store uploaded file path dynamically
+            print(f"✅ JSON File Uploaded: {self.credentials_path}")  # Debugging print
+            messagebox.showinfo("Success", f"Google API Credentials uploaded: {os.path.basename(file_path)}")
+        else:
+            messagebox.showerror("Error", "Invalid file selected.")
 
-def authenticate_google_sheets(self):
-    """ Authenticate Google Sheets API using the uploaded JSON file """
-    if not self.credentials_path:
-        messagebox.showerror("Error", "Please upload Google API credentials JSON first.")
-        return None
-    try:
-        creds = ServiceAccountCredentials.from_json_keyfile_name(self.credentials_path, SCOPE)
-        client = gspread.authorize(creds)
-        return client
-    except Exception as e:
-        messagebox.showerror("Error", f"Failed to authenticate: {e}")
-        return None
-
+    def authenticate_google_sheets(self):
+        """ Authenticate Google Sheets API using the uploaded JSON file """
+        if not self.credentials_path:
+            messagebox.showerror("Error", "Please upload Google API credentials JSON first.")
+            return None
+        try:
+            print(f"🔍 Using JSON Path: {self.credentials_path}")  # Debugging print
+            creds = ServiceAccountCredentials.from_json_keyfile_name(self.credentials_path, SCOPE)
+            client = gspread.authorize(creds)
+            return client
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to authenticate: {e}")
+            return None
 
     def run_update(self):
         lobby_id = self.lobby_id_var.get().strip()
@@ -183,7 +141,14 @@ def authenticate_google_sheets(self):
             return
         
         client = self.authenticate_google_sheets()
-        sheet = client.open_by_url(spreadsheet_url).worksheet(sheet_name)
+        if not client:
+            return
+
+        try:
+            sheet = client.open_by_url(spreadsheet_url).worksheet(sheet_name)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to open spreadsheet: {e}")
+            return
 
         access_token = get_osu_access_token(CLIENT_ID, CLIENT_SECRET)
         match_data = get_osu_match_data(lobby_id, access_token)
