@@ -150,13 +150,14 @@ class OsuSheetGUI(tk.Tk):
 
         tk.Button(self, text="Run Update", command=self.run_update).pack(pady=20)
 
-    def upload_credentials(self):
-        file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
-        if file_path and os.path.isfile(file_path):
-            self.credentials_path = file_path
-            messagebox.showinfo("Success", "Google API Credentials uploaded successfully.")
-        else:
-            messagebox.showerror("Error", "Invalid file selected.")
+def upload_credentials(self):
+    """ Allow user to upload Google API credentials JSON file """
+    file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+    if file_path and os.path.isfile(file_path):
+        self.credentials_path = file_path  # Store uploaded file path dynamically
+        messagebox.showinfo("Success", f"Google API Credentials uploaded: {os.path.basename(file_path)}")
+    else:
+        messagebox.showerror("Error", "Invalid file selected.")
 
 def authenticate_google_sheets(self):
     """ Authenticate Google Sheets API using the uploaded JSON file """
